@@ -1,0 +1,44 @@
+[
+    {
+        "manufacturer": "pfister",
+        "model": "pfister811",
+        "seats": 2,
+        "price": 1135000,
+        "topSpeed": { "mph": 132, "kmh": 212 },
+        "images": {
+            "frontQuarter": "https://vignette.wikia.nocookie.net/gtawiki/images/1/16/811-GTAO-FrontQuarter.png",
+            "rearQuarter": "https://vignette.wikia.nocookie.net/gtawiki/images/f/fa/811-GTAO-RearQuarter.png",
+            "front": "https://vignette.wikia.nocookie.net/gtawiki/images/9/9a/811-GTAO-Front.png",
+            "rear": "https://vignette.wikia.nocookie.net/gtawiki/images/1/10/811-GTAO-Rear.png",
+            "side": "https://vignette.wikia.nocookie.net/gtawiki/images/2/2c/811-GTAO-Side.png"
+        }
+    },
+    {
+        "manufacturer": "truffade",
+        "model": "adder",
+        "seats": 2,
+        "price": 1000000,
+        "topSpeed": { "mph": 124, "kmh": 199 },
+        "images": {
+            "frontQuarter": "https://vignette.wikia.nocookie.net/gtawiki/images/0/02/Adder-GTAV-FrontQuarter.png",
+            "rearQuarter": "https://vignette.wikia.nocookie.net/gtawiki/images/6/6b/Adder-GTAV-RearQuarter.png",
+            "front": "https://vignette.wikia.nocookie.net/gtawiki/images/3/39/Adder-GTAV-FrontView.png",
+            "rear": "https://vignette.wikia.nocookie.net/gtawiki/images/3/37/Adder-GTAV-RearView.png",
+            "side": "https://vignette.wikia.nocookie.net/gtawiki/images/e/e9/Adder-GTAV-Side.png"
+        }
+    },
+    {
+        "manufacturer": "överflöd",
+        "model": "autarch",
+        "seats": 2,
+        "price": 1955000,
+        "topSpeed": { "mph": 125, "kmh": 201 },
+        "images": {
+            "frontQuarter": "https://vignette.wikia.nocookie.net/gtawiki/images/f/fa/Autarch-GTAO-FrontQuarter.png",
+            "rearQuarter": "https://vignette.wikia.nocookie.net/gtawiki/images/e/eb/Autarch-GTAO-RearQuarter.png",
+            "front": "https://vignette.wikia.nocookie.net/gtawiki/images/8/8b/Autarch-GTAO-Front.png",
+            "rear": "https://vignette.wikia.nocookie.net/gtawiki/images/8/87/Autarch-GTAO-Rear.png",
+            "side": "https://vignette.wikia.nocookie.net/gtawiki/images/2/29/Autarch-GTAO-Side.png"
+        }
+    }
+]
