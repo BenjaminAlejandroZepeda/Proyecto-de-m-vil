@@ -1,6 +1,7 @@
 package com.example.motorsportapp.presentation.auth
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -10,9 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.motorsportapp.data.repository.UserRepository
+import com.example.motorsportapp.ui.theme.*
 
 @Composable
 fun LoginScreen(
@@ -37,28 +40,40 @@ fun LoginScreen(
         }
     }
 
-    Surface(modifier = Modifier.fillMaxSize()) {
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BackgroundMain)
+    ) {
         Box(contentAlignment = Alignment.Center) {
             Card(
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
+                    .padding(20.dp)
+                    .fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = BackgroundAlt)
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(
+                    modifier = Modifier
+                        .padding(24.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text(
                         "Iniciar Sesión",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.primary
+                        fontSize = 28.sp,
+                        color = SecondaryColor,
+                        style = MaterialTheme.typography.headlineMedium
                     )
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(20.dp))
 
                     if (uiState is AuthUiState.Error) {
                         Text(
                             (uiState as AuthUiState.Error).error,
-                            color = MaterialTheme.colorScheme.error
+                            color = ErrorColor,
+                            fontSize = 14.sp
                         )
-                        Spacer(Modifier.height(8.dp))
+                        Spacer(Modifier.height(12.dp))
                     }
 
                     OutlinedTextField(
@@ -66,10 +81,12 @@ fun LoginScreen(
                         onValueChange = { email = it },
                         label = { Text("Correo electrónico") },
                         singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
                     )
 
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(12.dp))
 
                     OutlinedTextField(
                         value = password,
@@ -77,34 +94,43 @@ fun LoginScreen(
                         label = { Text("Contraseña") },
                         visualTransformation = PasswordVisualTransformation(),
                         singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
                     )
 
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(24.dp))
 
                     Button(
                         onClick = { authVm.login(email, password) },
                         enabled = !loading,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .scale(scale)
+                            .height(50.dp)
+                            .scale(scale),
+                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor)
                     ) {
                         if (loading) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(18.dp),
-                                strokeWidth = 2.dp
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp,
+                                color = BackgroundMain
                             )
                             Spacer(Modifier.width(8.dp))
-                            Text("Ingresando...")
+                            Text("Ingresando...", fontSize = 16.sp, color = TextPrimary)
                         } else {
-                            Text("Ingresar")
+                            Text("Ingresar", fontSize = 16.sp, color = TextPrimary)
                         }
                     }
 
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(16.dp))
 
                     TextButton(onClick = { navController.navigate("register") }) {
-                        Text("¿No tienes cuenta? Regístrate")
+                        Text(
+                            "¿No tienes cuenta? Regístrate",
+                            color = TextSecondary,
+                            fontSize = 14.sp
+                        )
                     }
                 }
             }
