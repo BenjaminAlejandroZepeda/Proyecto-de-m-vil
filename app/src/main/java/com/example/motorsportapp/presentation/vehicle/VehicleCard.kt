@@ -1,3 +1,5 @@
+package com.example.motorsportapp.presentation.vehicle
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -10,9 +12,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import coil.compose.AsyncImage
 import com.example.motorsportapp.domain.model.Vehicle
+import com.example.motorsportapp.ui.theme.SuccessColor
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.collectAsState
+import com.example.motorsportapp.ui.theme.TextSecondary
+import androidx.compose.foundation.clickable
+import com.example.motorsportapp.ui.theme.PrimaryColor
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.outlined.ShoppingCart
 
 @Composable
-fun VehicleCard(vehicle: Vehicle, modifier: Modifier = Modifier) {
+fun VehicleCard(
+    vehicle: Vehicle,
+    viewModel: VehicleViewModel,
+    modifier: Modifier = Modifier,
+    showAddToCart: Boolean = true
+) {
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -53,6 +71,46 @@ fun VehicleCard(vehicle: Vehicle, modifier: Modifier = Modifier) {
             ) {
                 Text("Asientos: ${vehicle.seats}", style = MaterialTheme.typography.bodySmall)
                 Text("Veloc. máx: ${vehicle.topSpeed.kmh} km/h", style = MaterialTheme.typography.bodySmall)
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val isFavorite = viewModel.favoriteIds.collectAsState().value.contains(vehicle.id)
+                val isInCart = viewModel.cartIds.collectAsState().value.contains(vehicle.id)
+
+                // Botón de favoritos
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { viewModel.toggleFavorite(vehicle.id) },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.Star,
+                        contentDescription = "Favorito",
+                        tint = if (isFavorite) PrimaryColor else TextSecondary
+                    )
+                }
+
+                // Botón de carrito (solo si showAddToCart = true)
+                if (showAddToCart) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { viewModel.toggleCart(vehicle) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = if (isInCart) Icons.Filled.ShoppingCart else Icons.Outlined.ShoppingCart,
+                            contentDescription = "Carrito",
+                            tint = if (isInCart) SuccessColor else TextSecondary
+                        )
+                    }
+                }
             }
         }
     }

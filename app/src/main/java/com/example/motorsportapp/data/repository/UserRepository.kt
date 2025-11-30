@@ -8,8 +8,8 @@ import retrofit2.Response
 
 class UserRepository(private val context: Context) {
 
-    private val api = RetrofitInstance.api
     private val prefs = PrefDataStore(context)
+    private val api = RetrofitInstance.create(prefs)
 
     // LOGIN
     suspend fun login(email: String, password: String): Result<LoginResponse> {
@@ -19,11 +19,12 @@ class UserRepository(private val context: Context) {
             if (resp.isSuccessful && resp.body() != null) {
                 val body = resp.body()!!
 
-                // Guardar solo email/username/token
+                // Guardar email/username/token/userId
                 prefs.saveUserData(
                     token = body.token,
                     username = body.user.username ?: "",
-                    email = body.user.email
+                    email = body.user.email,
+                    userId = body.user.id?.toString() // 👈 guardar el id
                 )
 
                 Result.success(body)
@@ -55,4 +56,5 @@ class UserRepository(private val context: Context) {
     val savedToken = prefs.getToken
     val savedUsername = prefs.getUsername
     val savedEmail = prefs.getEmail
+    val savedUserId = prefs.getUserId // 👈 agregado
 }

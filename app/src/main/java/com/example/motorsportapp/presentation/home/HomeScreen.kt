@@ -1,6 +1,5 @@
 package com.example.motorsportapp.presentation.home
 
-import VehicleCard
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +13,7 @@ import com.example.motorsportapp.data.repository.VehicleRepository
 import com.example.motorsportapp.presentation.vehicle.VehicleViewModel
 import com.example.motorsportapp.presentation.ui.BottomNavBar
 import com.example.motorsportapp.presentation.ui.SearchBar
+import com.example.motorsportapp.presentation.vehicle.VehicleCard
 
 @Composable
 fun HomeScreen(
@@ -44,7 +44,7 @@ fun HomeScreen(
                 )
         ) {
             items(vehicles) { vehicle ->
-                VehicleCard(vehicle = vehicle)
+                VehicleCard(vehicle = vehicle, viewModel = viewModel)
             }
         }
     }

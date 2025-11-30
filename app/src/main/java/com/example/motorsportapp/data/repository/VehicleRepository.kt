@@ -13,4 +13,22 @@ class VehicleRepository(private val api: ApiService) {
             emptyList()
         }
     }
+
+    suspend fun addToFavorites(vehicleId: String) {
+        try {
+            api.addFavorite(mapOf("vehicleId" to vehicleId))
+        } catch (e: Exception) {
+            // Manejo de error, log o throw
+        }
+    }
+
+    suspend fun removeFromFavorites(vehicleId: String) {
+        try {
+            api.removeFavorite(vehicleId)
+        } catch (e: Exception) {
+            // Manejo de error
+        }
+    }
+
 }
+
