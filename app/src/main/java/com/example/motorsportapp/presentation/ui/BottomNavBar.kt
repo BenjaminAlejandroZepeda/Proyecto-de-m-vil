@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import androidx.compose.material.icons.filled.LocationOn
 
 @Composable
 fun BottomNavBar(navController: NavController, modifier: Modifier = Modifier) {
@@ -21,9 +22,9 @@ fun BottomNavBar(navController: NavController, modifier: Modifier = Modifier) {
         )
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate("search") },
-            icon = { Icon(Icons.Default.Search, contentDescription = "Buscar") },
-            label = { Text("Buscar") }
+            onClick = { navController.navigate("locations") },
+            icon = { Icon(Icons.Default.LocationOn, contentDescription = "Ubicaciones") },
+            label = { Text("Ubicaciones") }
         )
         NavigationBarItem(
             selected = false,

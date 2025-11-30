@@ -5,10 +5,13 @@ import com.example.motorsportapp.data.remote.dto.LoginResponse
 import com.example.motorsportapp.data.remote.dto.RegisterRequest
 import com.example.motorsportapp.data.remote.dto.RegisterResponse
 import com.example.motorsportapp.domain.model.Vehicle
+import com.example.motorsportapp.data.remote.dto.OrderDto
+import retrofit2.http.Path
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.DELETE
 
 interface ApiService {
 
@@ -22,4 +25,17 @@ interface ApiService {
     // Vehículos
     @GET("api/vehicles")
     suspend fun getVehicles(): List<Vehicle>
+
+    // Favoritos
+    @POST("api/favorites")
+    suspend fun addFavorite(@Body body: Map<String, String>): Response<Unit>
+
+    @DELETE("api/favorites/vehiculo/{vehicleId}")
+    suspend fun removeFavorite(@retrofit2.http.Path("vehicleId") vehicleId: String): Response<Unit>
+
+    @POST("api/orders")
+    suspend fun createOrder(@Body order: OrderDto): Response<OrderDto>
+
+    @GET("api/orders/user/{userId}")
+    suspend fun getOrdersByUserId(@Path("userId") userId: Long): Response<List<OrderDto>>
 }

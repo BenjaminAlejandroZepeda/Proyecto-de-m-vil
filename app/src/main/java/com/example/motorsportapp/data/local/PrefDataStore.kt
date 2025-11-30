@@ -15,13 +15,15 @@ class PrefDataStore(private val context: Context) {
         val TOKEN = stringPreferencesKey("token")
         val USERNAME = stringPreferencesKey("username")
         val EMAIL = stringPreferencesKey("email")
+        val USER_ID = stringPreferencesKey("user_id")
     }
 
-    suspend fun saveUserData(token: String?, username: String?, email: String?) {
+    suspend fun saveUserData(token: String?, username: String?, email: String?, userId: String?) {
         context.dataStore.edit { prefs ->
             if (token != null) prefs[TOKEN] = token
             if (username != null) prefs[USERNAME] = username
             if (email != null) prefs[EMAIL] = email
+            if (userId != null) prefs[USER_ID] = userId
         }
     }
 
@@ -36,6 +38,10 @@ class PrefDataStore(private val context: Context) {
 
     val getEmail: Flow<String?> = context.dataStore.data.map { prefs ->
         prefs[EMAIL]
+    }
+
+    val getUserId: Flow<String?> = context.dataStore.data.map { prefs ->
+        prefs[USER_ID]
     }
 
     suspend fun clear() {

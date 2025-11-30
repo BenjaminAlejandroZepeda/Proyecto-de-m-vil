@@ -2,6 +2,7 @@ package com.example.motorsportapp.presentation.ui
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -13,15 +14,22 @@ import com.example.motorsportapp.presentation.auth.LoginScreen
 import com.example.motorsportapp.presentation.auth.RegisterScreen
 import com.example.motorsportapp.presentation.cart.CartScreen
 import com.example.motorsportapp.presentation.home.HomeScreen
-import com.example.motorsportapp.presentation.home.SearchScreen
+import com.example.motorsportapp.data.local.PrefDataStore
+import com.example.motorsportapp.presentation.home.LocationScreen
+import com.example.motorsportapp.presentation.cart.CartViewModel
+import com.example.motorsportapp.presentation.vehicle.VehicleViewModel
 
 @Composable
-fun AppNavHost(context: Context, startDestination: String = "login") {
+fun NavGraph(context: Context, startDestination: String = "login") {
     val navController = rememberNavController()
 
+    val prefs = PrefDataStore(context)
+    val apiService = RetrofitInstance.create(prefs)
+    val vehicleRepository = VehicleRepository(apiService)
     val userRepository = UserRepository(context)
-    val vehicleRepository = VehicleRepository(RetrofitInstance.api)
 
+    val cartViewModel = CartViewModel(apiService)
+    val vehicleViewModel = VehicleViewModel(vehicleRepository)
 
     NavHost(navController = navController, startDestination = startDestination) {
 
@@ -37,9 +45,24 @@ fun AppNavHost(context: Context, startDestination: String = "login") {
             )
         }
 
-        // Rutas del BottomNav
-        composable("search") { SearchScreen() }
-        composable("cart") { CartScreen() }
+        // Ubicaciones
+        composable("locations") { LocationScreen(navController) }
+
+        // Carrito
+        composable("cart") {
+            val userId =
+                userRepository.savedUserId.collectAsState(initial = "").value
+                    ?.toLongOrNull() ?: 0L
+
+            CartScreen(
+                navController = navController,
+                cartViewModel = cartViewModel,
+                vehicleViewModel = vehicleViewModel,
+                userId = userId
+            )
+        }
+
+        // Cuenta
         composable("account") { AccountScreen() }
     }
 }
