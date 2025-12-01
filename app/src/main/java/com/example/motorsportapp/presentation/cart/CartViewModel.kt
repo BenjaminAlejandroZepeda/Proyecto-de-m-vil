@@ -29,13 +29,18 @@ class CartViewModel(private val apiService: ApiService) : ViewModel() {
         _cartItems.clear()
     }
 
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun checkout(userId: Long, direccion: String) {
         viewModelScope.launch {
+            // Fecha en formato ISO-8601 sin zona (ej: 2025-11-30T19:45:12)
+            val fechaIso = java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+
             val order = OrderDto(
                 id = null,
                 userId = userId,
-                fechaPedido = LocalDateTime.now().toString(),
+                fechaPedido = fechaIso,
                 estado = "pendiente",
                 direccionEnvio = direccion,
                 items = _cartItems.map { vehicle ->
@@ -45,7 +50,7 @@ class CartViewModel(private val apiService: ApiService) : ViewModel() {
                         precioUnitario = vehicle.price,
                         precioTotal = vehicle.price,
                         vehicle = VehicleDto(
-                            id = vehicle.id.toLongOrNull(), // id es String en dominio
+                            id = vehicle.id,           // ✅ NO convertir: dominio usa String
                             model = vehicle.model,
                             price = vehicle.price
                         )
@@ -53,11 +58,23 @@ class CartViewModel(private val apiService: ApiService) : ViewModel() {
                 }
             )
 
-            val response = apiService.createOrder(order)
-            if (response.isSuccessful) {
-                compraExitosa = true
-                clearCart()
+            try {
+                val response = apiService.createOrder(order)
+                if (response.isSuccessful) {
+                    compraExitosa = true
+                    clearCart()
+                } else {
+                    compraExitosa = false
+                    // Opcional: loguea/elabora el error del servidor
+                    // val err = response.errorBody()?.string()
+                    // _uiMessage.value = "Error al crear la orden: ${response.code()}"
+                }
+            } catch (e: Exception) {
+                compraExitosa = false
+                // Opcional: expositor de error para la UI
+                // _uiMessage.value = "Error de red: ${e.localizedMessage}"
             }
         }
     }
+
 }
