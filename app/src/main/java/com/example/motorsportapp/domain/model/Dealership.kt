@@ -1,5 +1,15 @@
 package com.example.motorsportapp.domain.model
 
+import java.util.Calendar
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material3.Button
+import androidx.compose.ui.Modifier
+import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.fillMaxWidth
+
 data class Dealership(
     val name: String,
     val address: String,
@@ -16,7 +26,7 @@ fun loadDealerships(): List<Dealership> = listOf(
         name = "Nissan Kovacs Viña del Mar",
         address = "Quillota 315, 2531115 Viña del Mar, Valparaíso",
         contact = 6008996600,
-        imageUrl = "https://i.imgur.com/hGAM8Z5.jpeg",
+        imageUrl = "https://lh3.googleusercontent.com/p/AF1QipNSt0wx7NoU6k8dXNh8WULjR5J0aWvrVLsZXzOK=s680-w680-h510-rw",
         openHour = 9,
         closeHour = 19,
         latitude = -32.984091449495665,
@@ -43,3 +53,24 @@ fun loadDealerships(): List<Dealership> = listOf(
         longitude = -71.24672676483772
     )
 )
+
+fun Dealership.isOpenNow(): Boolean {
+    val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+    return currentHour in openHour until closeHour
+}
+
+@Composable
+fun OpenMapsButton(latitude: Double, longitude: Double, label: String) {
+    val context = LocalContext.current
+    Button(
+        onClick = {
+            val gmmIntentUri = Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude($label)")
+            val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+            mapIntent.setPackage("com.google.android.apps.maps")
+            context.startActivity(mapIntent)
+        },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text("Abrir en Google Maps")
+    }
+}

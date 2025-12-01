@@ -31,18 +31,20 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             SearchBar(
-                modifier = Modifier.statusBarsPadding()
+                modifier = Modifier.statusBarsPadding(),
+                onSearch = { query -> viewModel.onSearchQueryChanged(query) }
             )
         },
         bottomBar = { BottomNavBar(navController) }
     ) { contentPadding ->
 
+        val vehicles by viewModel.filteredVehicles.collectAsState()
+
         LazyColumn(
-            modifier = Modifier
-                .padding(
-                    top = contentPadding.calculateTopPadding(),
-                    bottom = contentPadding.calculateBottomPadding()
-                )
+            modifier = Modifier.padding(
+                top = contentPadding.calculateTopPadding(),
+                bottom = contentPadding.calculateBottomPadding()
+            )
         ) {
             items(vehicles) { vehicle ->
                 VehicleCard(
@@ -51,7 +53,8 @@ fun HomeScreen(
                     navController = navController,
                     modifier = Modifier.fillMaxWidth()
                 )
+            }
         }
     }
 }
-}
+
