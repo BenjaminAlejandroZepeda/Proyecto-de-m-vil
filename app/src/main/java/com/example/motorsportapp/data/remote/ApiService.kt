@@ -6,6 +6,8 @@ import com.example.motorsportapp.data.remote.dto.RegisterRequest
 import com.example.motorsportapp.data.remote.dto.RegisterResponse
 import com.example.motorsportapp.domain.model.Vehicle
 import com.example.motorsportapp.data.remote.dto.OrderDto
+import com.example.motorsportapp.data.remote.dto.ReviewDto
+import com.example.motorsportapp.domain.model.Review
 import retrofit2.http.Path
 import retrofit2.Response
 import retrofit2.http.Body
@@ -38,4 +40,14 @@ interface ApiService {
 
     @GET("api/orders/user/{userId}")
     suspend fun getOrdersByUserId(@Path("userId") userId: Long): Response<List<OrderDto>>
+
+    //Favoritos
+
+    @GET("/api/reviews/vehiculo/{vehicleId}")
+    suspend fun getReviewsByVehicle(@Path("vehicleId") vehicleId: String): List<ReviewDto>
+
+
+
+
+
 }

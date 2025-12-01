@@ -1,5 +1,6 @@
 package com.example.motorsportapp.presentation.home
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -30,7 +31,7 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             SearchBar(
-                modifier = Modifier.statusBarsPadding() // Ajusta automáticamente bajo la status bar
+                modifier = Modifier.statusBarsPadding()
             )
         },
         bottomBar = { BottomNavBar(navController) }
@@ -44,8 +45,13 @@ fun HomeScreen(
                 )
         ) {
             items(vehicles) { vehicle ->
-                VehicleCard(vehicle = vehicle, viewModel = viewModel)
-            }
+                VehicleCard(
+                    vehicle = vehicle,
+                    viewModel = viewModel,
+                    navController = navController,
+                    modifier = Modifier.fillMaxWidth()
+                )
         }
     }
+}
 }
