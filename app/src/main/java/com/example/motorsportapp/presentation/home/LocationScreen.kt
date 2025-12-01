@@ -15,8 +15,8 @@ import androidx.navigation.NavHostController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.painterResource
 import com.example.motorsportapp.R
-
-
+import com.example.motorsportapp.domain.model.isOpenNow
+import com.example.motorsportapp.domain.model.OpenMapsButton
 
 
 @Composable
@@ -53,7 +53,26 @@ fun LocationScreen(navController: NavHostController) {
                         Text(dealer.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                         Text(dealer.address, style = MaterialTheme.typography.bodyMedium)
                         Text("Tel: ${dealer.contact}", style = MaterialTheme.typography.bodySmall)
-                        Text("Horario: ${dealer.openHour}:00 - ${dealer.closeHour}:00", style = MaterialTheme.typography.bodySmall)
+                        Row {
+                            Text(
+                                "Horario: ${dealer.openHour}:00 - ${dealer.closeHour}:00",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            val isOpen = dealer.isOpenNow()
+                            Text(
+                                if (isOpen) "Abierto" else "Cerrado",
+                                color = if (isOpen) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OpenMapsButton(
+                            latitude = dealer.latitude,
+                            longitude = dealer.longitude,
+                            label = dealer.name
+                        )
                     }
                 }
             }

@@ -16,14 +16,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SearchBar(modifier: Modifier = Modifier) {
+fun SearchBar(
+    modifier: Modifier = Modifier,
+    onSearch: (String) -> Unit
+) {
     var text by remember { mutableStateOf("") }
 
     TextField(
         value = text,
-        onValueChange = { text = it },
+        onValueChange = {
+            text = it
+            onSearch(it)
+        },
         leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = "Buscar") },
-        placeholder = { Text(text = "Buscar...") },
+        placeholder = { Text(text = "Buscar nombre...") },
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)

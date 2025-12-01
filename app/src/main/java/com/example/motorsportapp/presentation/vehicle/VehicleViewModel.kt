@@ -5,8 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.motorsportapp.data.repository.VehicleRepository
 import com.example.motorsportapp.domain.model.Vehicle
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class VehicleViewModel(private val repository: VehicleRepository) : ViewModel() {
@@ -14,7 +13,7 @@ class VehicleViewModel(private val repository: VehicleRepository) : ViewModel() 
     private val _vehicles = MutableStateFlow<List<Vehicle>>(emptyList())
     val vehicles: StateFlow<List<Vehicle>> = _vehicles
 
-    private val _loading = MutableStateFlow<Boolean>(false)
+    private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
 
     private val _cart = MutableStateFlow<List<Vehicle>>(emptyList())
@@ -25,6 +24,17 @@ class VehicleViewModel(private val repository: VehicleRepository) : ViewModel() 
 
     private val _cartIds = MutableStateFlow<Set<String>>(emptySet())
     val cartIds: StateFlow<Set<String>> = _cartIds
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
+
+    val filteredVehicles: StateFlow<List<Vehicle>> = combine(_vehicles, _searchQuery) { vehicles, query ->
+        if (query.isBlank()) vehicles
+        else vehicles.filter {
+            it.manufacturer.contains(query, ignoreCase = true) ||
+                    it.model.contains(query, ignoreCase = true)
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
         loadVehicles()
@@ -66,8 +76,6 @@ class VehicleViewModel(private val repository: VehicleRepository) : ViewModel() 
         }
     }
 
-
-
     fun toggleFavorite(vehicleId: String) {
         viewModelScope.launch {
             if (_favoriteIds.value.contains(vehicleId)) {
@@ -88,4 +96,7 @@ class VehicleViewModel(private val repository: VehicleRepository) : ViewModel() 
         }
     }
 
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+    }
 }
