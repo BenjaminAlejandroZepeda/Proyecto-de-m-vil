@@ -1,4 +1,4 @@
-package com.example.motorsportapp.presentation.auth
+package com.example.motorsportapp.presentation.garage
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

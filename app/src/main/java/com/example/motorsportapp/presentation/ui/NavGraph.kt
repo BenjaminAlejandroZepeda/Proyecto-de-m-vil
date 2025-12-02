@@ -1,8 +1,11 @@
 
 package com.example.motorsportapp.presentation.ui
 
+import FavoritesViewModelFactory
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,19 +27,24 @@ import com.example.motorsportapp.presentation.home.HomeScreen
 import com.example.motorsportapp.presentation.home.LocationScreen
 import com.example.motorsportapp.presentation.vehicle.VehicleDetailScreen
 import com.example.motorsportapp.presentation.vehicle.VehicleViewModel
-import com.example.motorsportapp.presentation.auth.OrdersScreen
-import com.example.motorsportapp.presentation.auth.OrdersViewModel
+import com.example.motorsportapp.presentation.order.OrdersScreen
+import com.example.motorsportapp.presentation.order.OrdersViewModel
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.remember
-import com.example.motorsportapp.presentation.auth.GarageScreen
-import com.example.motorsportapp.presentation.auth.GarageViewModel
-import com.example.motorsportapp.presentation.auth.GarageCalificarScreen
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.motorsportapp.presentation.garage.GarageScreen
+import com.example.motorsportapp.presentation.garage.GarageViewModel
+import com.example.motorsportapp.presentation.review.GarageCalificarScreen
 import com.example.motorsportapp.presentation.auth.AuthViewModel
+import com.example.motorsportapp.presentation.favorites.FavoritesScreen
+import com.example.motorsportapp.presentation.favorites.FavoritesViewModel
 import com.example.motorsportapp.presentation.review.ReviewViewModel
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("ViewModelConstructorInComposable")
 @Composable
 fun NavGraph(context: Context, startDestination: String = "login") {
@@ -147,6 +155,24 @@ fun NavGraph(context: Context, startDestination: String = "login") {
             }
         }
 
+        // Favorites
+        composable("favorites") {
+            val context = LocalContext.current
+
+
+            val pref = remember { PrefDataStore(context) }
+            val api = remember { RetrofitInstance.create(pref) }
+
+            val viewModel: FavoritesViewModel = viewModel(
+                factory = FavoritesViewModelFactory(api)
+            )
+            FavoritesScreen(navController = navController, viewModel = viewModel)
+        }
+
+
+
+
+
         // Calificar
         composable("review/{vehicleId}") { backStackEntry ->
             val vehicleId = backStackEntry.arguments?.getString("vehicleId") ?: ""
@@ -167,11 +193,28 @@ fun NavGraph(context: Context, startDestination: String = "login") {
 
 
 
+
         composable("vehicleDetail/{vehicleId}") { backStackEntry ->
             val vehicleId = backStackEntry.arguments?.getString("vehicleId") ?: ""
-            val reviewViewModel = ReviewViewModel(apiService)
+
+            val context = LocalContext.current
+            val pref = remember { PrefDataStore(context) }
+            val api = remember { RetrofitInstance.create(pref) }
 
 
+            val favoritesViewModel: FavoritesViewModel = viewModel(
+                factory = FavoritesViewModelFactory(api)
+            )
+
+
+            val vehicleRepository = remember { VehicleRepository(api) }
+            val vehicleViewModel: VehicleViewModel = viewModel(
+                factory = VehicleViewModel.Factory(vehicleRepository)
+            )
+
+            val reviewViewModel = remember { ReviewViewModel(api) }
+
+            val cartViewModel = remember { CartViewModel(api) }
 
             LaunchedEffect(vehicleId) {
                 reviewViewModel.loadReviews(vehicleId)
@@ -182,11 +225,12 @@ fun NavGraph(context: Context, startDestination: String = "login") {
             VehicleDetailScreen(
                 vehicleId = vehicleId,
                 vehicleViewModel = vehicleViewModel,
+                favoritesViewModel = favoritesViewModel,
                 reviewViewModel = reviewViewModel,
                 cartViewModel = cartViewModel,
                 onClose = { navController.popBackStack() }
             )
-
         }
+
     }
 }

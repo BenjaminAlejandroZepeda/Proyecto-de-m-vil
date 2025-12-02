@@ -1,4 +1,4 @@
-package com.example.motorsportapp.presentation.auth
+package com.example.motorsportapp.presentation.review
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.motorsportapp.data.remote.dto.ReviewDto
-import com.example.motorsportapp.presentation.review.ReviewViewModel
 import android.util.Log
 
 

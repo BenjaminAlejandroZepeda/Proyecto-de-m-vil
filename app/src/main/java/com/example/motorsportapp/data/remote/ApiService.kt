@@ -1,5 +1,6 @@
 package com.example.motorsportapp.data.remote
 
+import com.example.motorsportapp.data.remote.dto.FavoriteDTO
 import com.example.motorsportapp.data.remote.dto.LoginRequest
 import com.example.motorsportapp.data.remote.dto.LoginResponse
 import com.example.motorsportapp.data.remote.dto.RegisterRequest
@@ -32,12 +33,15 @@ interface ApiService {
     suspend fun getVehicles(): List<Vehicle>
 
     // Favoritos
+
     @POST("api/favorites")
     suspend fun addFavorite(@Body body: Map<String, String>): Response<Unit>
 
     @DELETE("api/favorites/vehiculo/{vehicleId}")
-    suspend fun removeFavorite(@retrofit2.http.Path("vehicleId") vehicleId: String): Response<Unit>
+    suspend fun removeFavorite(@Path("vehicleId") vehicleId: String): Response<Unit>
 
+    @GET("api/favorites/me")
+    suspend fun getMyFavorites(): List<FavoriteDTO>
     @POST("api/orders")
     suspend fun createOrder(@Body order: OrderDto): Response<OrderDto>
 

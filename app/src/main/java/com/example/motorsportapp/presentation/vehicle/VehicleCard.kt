@@ -20,13 +20,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.motorsportapp.domain.model.Vehicle
+import com.example.motorsportapp.presentation.favorites.FavoritesViewModel
 import com.example.motorsportapp.ui.theme.PrimaryColor
 import com.example.motorsportapp.ui.theme.TextSecondary
 
 @Composable
 fun VehicleCard(
     vehicle: Vehicle,
-    viewModel: VehicleViewModel,
+    favoritesViewModel: FavoritesViewModel,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
@@ -77,15 +78,15 @@ fun VehicleCard(
                 )
             }
 
-            // ❤️ Ícono de favoritos
-            val isFavorite = viewModel.favoriteIds.collectAsState().value.contains(vehicle.id)
+
+            val isFavorite = favoritesViewModel.isFavorite(vehicle.id)
 
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(12.dp)
                     .clickable {
-                        viewModel.toggleFavorite(vehicle.id)
+                        favoritesViewModel.toggleFavorite(vehicle.id)
                     }
             ) {
                 Icon(

@@ -1,6 +1,9 @@
 
 package com.example.motorsportapp.presentation.vehicle
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -31,6 +34,7 @@ import kotlinx.coroutines.launch
 import com.example.motorsportapp.domain.model.Vehicle
 import com.example.motorsportapp.domain.model.Review
 import com.example.motorsportapp.presentation.cart.CartViewModel
+import com.example.motorsportapp.presentation.favorites.FavoritesViewModel
 import com.example.motorsportapp.presentation.review.ReviewViewModel
 import com.example.motorsportapp.ui.theme.PrimaryColor
 import com.example.motorsportapp.ui.theme.SuccessColor
@@ -41,6 +45,7 @@ import com.example.motorsportapp.ui.theme.TextSecondary
 fun VehicleDetailScreen(
     vehicleId: String,
     vehicleViewModel: VehicleViewModel,
+    favoritesViewModel: FavoritesViewModel,
     reviewViewModel: ReviewViewModel,
     cartViewModel: CartViewModel,
     onClose: () -> Unit
@@ -48,18 +53,16 @@ fun VehicleDetailScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val vehiclesState by vehicleViewModel.vehicles.collectAsState()
-    val favoriteIds by vehicleViewModel.favoriteIds.collectAsState()
+    val favoriteIds by favoritesViewModel.favorites.collectAsState()
 
-    // Estado local para reseñas cargadas
     var vehicleReviews by remember { mutableStateOf<List<Review>>(emptyList()) }
-
     var vehicle by remember { mutableStateOf<Vehicle?>(null) }
     var loadingVehicle by remember { mutableStateOf(true) }
     var loadingReviews by remember { mutableStateOf(true) }
     var errorVehicle by remember { mutableStateOf<String?>(null) }
     var showToast by remember { mutableStateOf(false) }
 
-    // Cargar vehículo
+
     LaunchedEffect(vehicleId, vehiclesState) {
         loadingVehicle = true
         vehicle = vehiclesState.find { it.id.toString().trim() == vehicleId.trim() }
@@ -67,11 +70,10 @@ fun VehicleDetailScreen(
         loadingVehicle = false
     }
 
-    // Cargar reseñas
+
     LaunchedEffect(vehicleId) {
         loadingReviews = true
         try {
-
             val dtos = reviewViewModel.getReviews(vehicleId)
             vehicleReviews = dtos.map { rv ->
                 com.example.motorsportapp.domain.model.Review(
@@ -89,8 +91,6 @@ fun VehicleDetailScreen(
         }
     }
 
-
-
     if (loadingVehicle) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
@@ -98,12 +98,22 @@ fun VehicleDetailScreen(
         return
     }
 
+
     if (errorVehicle != null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(errorVehicle ?: "Vehículo no encontrado")
+        Box(
+            Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                CircularProgressIndicator()
+                Spacer(Modifier.height(12.dp))
+                Text("Buscando vehículo...", style = MaterialTheme.typography.bodyMedium)
+            }
         }
         return
     }
+
 
     vehicle?.let { v ->
         Column(
@@ -112,7 +122,7 @@ fun VehicleDetailScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
-            // Barra superior
+
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = { onClose() }) {
                     Icon(Icons.Filled.ArrowBack, contentDescription = "Volver")
@@ -126,7 +136,7 @@ fun VehicleDetailScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            // Carrusel de imágenes
+
             val images = listOfNotNull(v.images?.front, v.images?.rear, v.images?.side, v.images?.frontQuarter)
             Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
                 images.forEach { url ->
@@ -147,19 +157,36 @@ fun VehicleDetailScreen(
             Spacer(Modifier.height(16.dp))
 
 
+
+
+
+            var justAdded by remember { mutableStateOf(false) }
+            val isFav = favoriteIds.any { it.vehicle.id == v.id }
+            val scale by animateFloatAsState(
+                targetValue = if (justAdded) 1.4f else 1f,
+                animationSpec = tween(durationMillis = 300),
+                finishedListener = { justAdded = false }
+            )
+
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                 Text("${v.manufacturer} ${v.model}", style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-                IconButton(onClick = { vehicleViewModel.toggleFavorite(v.id) }) {
+                IconButton(onClick = {
+                    if (!isFav) justAdded = true
+                    favoritesViewModel.toggleFavorite(v.id)
+                }) {
                     Icon(
-                        imageVector = if (favoriteIds.contains(v.id)) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                        imageVector = if (isFav) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                         contentDescription = "Favorito",
-                        tint = if (favoriteIds.contains(v.id)) PrimaryColor else TextSecondary
+                        tint = if (isFav) Color.Yellow else Color.Gray,
+                        modifier = Modifier.size((28.dp.value * scale).dp)
                     )
                 }
             }
 
-            Spacer(Modifier.height(12.dp))
 
+
+
+            Spacer(Modifier.height(12.dp))
 
             Text("Fabricante: ${v.manufacturer}")
             Text("Modelo: ${v.model}")
@@ -168,7 +195,6 @@ fun VehicleDetailScreen(
             v.topSpeed?.let { ts -> Text("Velocidad Máxima: ${ts.kmh} km/h (${ts.mph} mph)") }
 
             Spacer(Modifier.height(20.dp))
-
 
             Button(
                 onClick = {
@@ -185,10 +211,9 @@ fun VehicleDetailScreen(
 
             Spacer(Modifier.height(24.dp))
 
-
             Text("Reseñas", style = MaterialTheme.typography.titleMedium)
             val averageRating: Int = if (vehicleReviews.isNotEmpty()) {
-                vehicleReviews.map { it.puntuacion }.average().toInt() // redondea hacia abajo
+                vehicleReviews.map { it.puntuacion }.average().toInt()
             } else 0
             Text("Calificación: ⭐$averageRating", fontWeight = FontWeight.Bold)
 
@@ -204,7 +229,6 @@ fun VehicleDetailScreen(
                         Text("Usuario: ${rv.username}", style = MaterialTheme.typography.bodySmall)
                     }
                 }
-
             }
 
             Spacer(Modifier.height(12.dp))
@@ -215,3 +239,4 @@ fun VehicleDetailScreen(
         }
     }
 }
+

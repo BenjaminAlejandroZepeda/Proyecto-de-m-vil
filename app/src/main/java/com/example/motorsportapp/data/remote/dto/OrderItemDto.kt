@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class OrderItemDto(
     val id: Long?,
     val cantidad: Int?,
-    val precioUnitario: Int?,
-    val precioTotal: Int?,
+    val precioUnitario: Int,
+    val precioTotal: Int,
     val vehicle: VehicleDto?
 )

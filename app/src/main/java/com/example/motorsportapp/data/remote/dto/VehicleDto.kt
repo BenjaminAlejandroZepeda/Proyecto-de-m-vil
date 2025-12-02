@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class VehicleDto(
     val id: String?,
     val model: String?,
-    val price: Int?
+    val price: Int
 )
 
