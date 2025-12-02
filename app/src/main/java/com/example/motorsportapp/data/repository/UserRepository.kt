@@ -19,12 +19,12 @@ class UserRepository(private val context: Context) {
             if (resp.isSuccessful && resp.body() != null) {
                 val body = resp.body()!!
 
-                // Guardar email/username/token/userId
+
                 prefs.saveUserData(
                     token = body.token,
                     username = body.user.username ?: "",
                     email = body.user.email,
-                    userId = body.user.id?.toString() // 👈 guardar el id
+                    userId = body.user.id
                 )
 
                 Result.success(body)
@@ -52,9 +52,14 @@ class UserRepository(private val context: Context) {
         }
     }
 
+
+    suspend fun logout() {
+        prefs.clear()
+    }
+
     // Flows opcionales
     val savedToken = prefs.getToken
     val savedUsername = prefs.getUsername
     val savedEmail = prefs.getEmail
-    val savedUserId = prefs.getUserId // 👈 agregado
+    val savedUserId = prefs.getUserId
 }

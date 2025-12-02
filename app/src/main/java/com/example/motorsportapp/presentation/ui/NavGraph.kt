@@ -22,21 +22,29 @@ import com.example.motorsportapp.presentation.cart.CartScreen
 import com.example.motorsportapp.presentation.cart.CartViewModel
 import com.example.motorsportapp.presentation.home.HomeScreen
 import com.example.motorsportapp.presentation.home.LocationScreen
-import com.example.motorsportapp.presentation.review.ReviewViewModel
 import com.example.motorsportapp.presentation.vehicle.VehicleDetailScreen
 import com.example.motorsportapp.presentation.vehicle.VehicleViewModel
+import com.example.motorsportapp.presentation.auth.OrdersScreen
+import com.example.motorsportapp.presentation.auth.OrdersViewModel
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.remember
+import com.example.motorsportapp.presentation.auth.GarageScreen
+import com.example.motorsportapp.presentation.auth.GarageViewModel
+import com.example.motorsportapp.presentation.auth.GarageCalificarScreen
+import com.example.motorsportapp.presentation.auth.AuthViewModel
+import com.example.motorsportapp.presentation.review.ReviewViewModel
 
-// ❌ ELIMINAR este import que rompe todo:
-// import com.google.firebase.appdistribution.gradle.ApiService
 
 @SuppressLint("ViewModelConstructorInComposable")
 @Composable
 fun NavGraph(context: Context, startDestination: String = "login") {
     val navController = rememberNavController()
 
-    // Inicialización de repositorios y ViewModels (una sola vez)
+    // Inicialización de repositorios y ViewModels
     val prefs = PrefDataStore(context)
-    val apiService: ApiService = RetrofitInstance.create(prefs) // ✔ Usa tu ApiService top-level
+    val apiService: ApiService = RetrofitInstance.create(prefs)
 
     val vehicleRepository = VehicleRepository(apiService)
     val userRepository = UserRepository(context)
@@ -66,10 +74,7 @@ fun NavGraph(context: Context, startDestination: String = "login") {
 
         // Carrito
         composable("cart") {
-            val userId = userRepository.savedUserId
-                .collectAsState(initial = null)
-                .value
-                ?.toLongOrNull() ?: 0L
+            val userId = userRepository.savedUserId.collectAsState(initial = 0L).value ?: 0L
 
             CartScreen(
                 navController = navController,
@@ -80,16 +85,92 @@ fun NavGraph(context: Context, startDestination: String = "login") {
 
         // Cuenta
         composable("account") {
-            AccountScreen()
+            val userName = userRepository.savedUsername.collectAsState(initial = "").value
+            val userEmail = userRepository.savedEmail.collectAsState(initial = "").value
+
+            AccountScreen(
+                navController = navController,
+                userName = userName,
+                userEmail = userEmail,
+                userRepository = userRepository
+            )
         }
+
+        // Órdenes
+        composable("orders") {
+            val ordersViewModel = remember { OrdersViewModel(apiService) } // 👈 evita recrearlo
+
+            val userId = userRepository.savedUserId.collectAsState(initial = 0L).value ?: 0L
+
+            LaunchedEffect(userId) {
+                ordersViewModel.loadOrders(userId)
+            }
+
+            val orders = ordersViewModel.orders.collectAsState().value
+            val loading = ordersViewModel.loading.collectAsState().value
+            val error = ordersViewModel.error.collectAsState().value
+
+            OrdersScreen(
+                navController = navController,
+                orders = orders
+            )
+
+            if (loading) {
+                CircularProgressIndicator()
+            }
+            error?.let {
+                Text("⚠️ $it", color = MaterialTheme.colorScheme.error)
+            }
+        }
+
+        // Garage
+        composable("garage") {
+            val garageViewModel = remember { GarageViewModel(apiService) }
+
+            val userId = userRepository.savedUserId.collectAsState(initial = 0L).value ?: 0L
+
+            LaunchedEffect(Unit) {
+                garageViewModel.loadGarage()
+            }
+
+            val vehicles = garageViewModel.vehicles.collectAsState().value
+            val loading = garageViewModel.loading.collectAsState().value
+            val error = garageViewModel.error.collectAsState().value
+
+            GarageScreen(navController, vehicles)
+
+            if (loading) {
+                CircularProgressIndicator()
+            }
+            error?.let {
+                Text("⚠️ $it", color = MaterialTheme.colorScheme.error)
+            }
+        }
+
+        // Calificar
+        composable("review/{vehicleId}") { backStackEntry ->
+            val vehicleId = backStackEntry.arguments?.getString("vehicleId") ?: ""
+            val authViewModel = remember { AuthViewModel(userRepository) }
+            val userId = authViewModel.currentUserId.collectAsState().value ?: 0L
+
+            val reviewRepository = ReviewRepository(apiService)
+            val reviewViewModel = remember { ReviewViewModel(apiService) }
+
+
+            GarageCalificarScreen(
+                navController = navController,
+                vehicleId = vehicleId,
+                userId = userId,
+                reviewViewModel = reviewViewModel
+            )
+        }
+
 
 
         composable("vehicleDetail/{vehicleId}") { backStackEntry ->
             val vehicleId = backStackEntry.arguments?.getString("vehicleId") ?: ""
+            val reviewViewModel = ReviewViewModel(apiService)
 
-
-            val reviewRepository = ReviewRepository(apiService)
-            val reviewViewModel = ReviewViewModel(reviewRepository)
 
 
             LaunchedEffect(vehicleId) {
