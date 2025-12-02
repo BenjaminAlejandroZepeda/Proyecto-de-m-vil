@@ -18,7 +18,7 @@ class VehicleRepository(private val api: ApiService) {
         try {
             api.addFavorite(mapOf("vehicleId" to vehicleId))
         } catch (e: Exception) {
-            // Manejo de error, log o throw
+
         }
     }
 
@@ -26,7 +26,7 @@ class VehicleRepository(private val api: ApiService) {
         try {
             api.removeFavorite(vehicleId)
         } catch (e: Exception) {
-            // Manejo de error
+
         }
     }
 

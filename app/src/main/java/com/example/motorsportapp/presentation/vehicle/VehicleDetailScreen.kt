@@ -35,6 +35,8 @@ import com.example.motorsportapp.presentation.review.ReviewViewModel
 import com.example.motorsportapp.ui.theme.PrimaryColor
 import com.example.motorsportapp.ui.theme.SuccessColor
 import com.example.motorsportapp.ui.theme.TextSecondary
+
+
 @Composable
 fun VehicleDetailScreen(
     vehicleId: String,
@@ -69,13 +71,25 @@ fun VehicleDetailScreen(
     LaunchedEffect(vehicleId) {
         loadingReviews = true
         try {
-            vehicleReviews = reviewViewModel.getReviews(vehicleId)
+
+            val dtos = reviewViewModel.getReviews(vehicleId)
+            vehicleReviews = dtos.map { rv ->
+                com.example.motorsportapp.domain.model.Review(
+                    id = rv.id,
+                    comentario = rv.comentario,
+                    puntuacion = rv.puntuacion,
+                    fecha = rv.fecha,
+                    username = rv.user.username ?: "Desconocido"
+                )
+            }
         } catch (e: Exception) {
             vehicleReviews = emptyList()
         } finally {
             loadingReviews = false
         }
     }
+
+
 
     if (loadingVehicle) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -187,9 +201,10 @@ fun VehicleDetailScreen(
                     Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
                         Text("⭐ ${rv.puntuacion}", fontWeight = FontWeight.Bold)
                         Text(rv.comentario)
-                        Text("Usuario: ${rv.user.username}", style = MaterialTheme.typography.bodySmall)
+                        Text("Usuario: ${rv.username}", style = MaterialTheme.typography.bodySmall)
                     }
                 }
+
             }
 
             Spacer(Modifier.height(12.dp))

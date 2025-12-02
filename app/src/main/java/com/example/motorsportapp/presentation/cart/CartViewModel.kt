@@ -12,6 +12,7 @@ import com.example.motorsportapp.data.remote.dto.VehicleDto
 import com.example.motorsportapp.domain.model.Vehicle
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import com.example.motorsportapp.data.remote.dto.GarageRequest
 
 class CartViewModel(private val apiService: ApiService) : ViewModel() {
 
@@ -33,8 +34,7 @@ class CartViewModel(private val apiService: ApiService) : ViewModel() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun checkout(userId: Long, direccion: String) {
         viewModelScope.launch {
-            // Fecha en formato ISO-8601 sin zona (ej: 2025-11-30T19:45:12)
-            val fechaIso = java.time.LocalDateTime.now()
+            val fechaIso = LocalDateTime.now()
                 .format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
             val order = OrderDto(
@@ -50,7 +50,7 @@ class CartViewModel(private val apiService: ApiService) : ViewModel() {
                         precioUnitario = vehicle.price,
                         precioTotal = vehicle.price,
                         vehicle = VehicleDto(
-                            id = vehicle.id,           // ✅ NO convertir: dominio usa String
+                            id = vehicle.id,
                             model = vehicle.model,
                             price = vehicle.price
                         )
@@ -61,20 +61,23 @@ class CartViewModel(private val apiService: ApiService) : ViewModel() {
             try {
                 val response = apiService.createOrder(order)
                 if (response.isSuccessful) {
+                    _cartItems.forEach { vehicle ->
+                        try {
+                            apiService.addToGarage(GarageRequest(vehicle.id))
+                        } catch (e: Exception) {
+                        }
+                    }
+
                     compraExitosa = true
                     clearCart()
                 } else {
                     compraExitosa = false
-                    // Opcional: loguea/elabora el error del servidor
-                    // val err = response.errorBody()?.string()
-                    // _uiMessage.value = "Error al crear la orden: ${response.code()}"
                 }
             } catch (e: Exception) {
                 compraExitosa = false
-                // Opcional: expositor de error para la UI
-                // _uiMessage.value = "Error de red: ${e.localizedMessage}"
             }
         }
     }
+
 
 }

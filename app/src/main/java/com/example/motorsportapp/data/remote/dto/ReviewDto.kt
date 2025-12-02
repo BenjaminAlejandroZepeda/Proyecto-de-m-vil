@@ -10,10 +10,20 @@ data class ReviewDto(
     val puntuacion: Int,
     val fecha: String,
     val user: UserBasicDto,
-    val vehicle: VehicleDto?    // viene embebido
+    val vehicle: VehicleDto?
 )
 
 @Serializable
 data class UserBasicDto(
     val username: String
 )
+
+data class ReviewRequest(
+    val comentario: String,
+    val puntuacion: Int,
+    val user: UserIdWrapper,
+    val vehicle: VehicleIdWrapper
+)
+
+data class UserIdWrapper(val id: Long)
+data class VehicleIdWrapper(val id: String)

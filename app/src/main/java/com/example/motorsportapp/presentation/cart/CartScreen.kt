@@ -8,7 +8,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.motorsportapp.presentation.ui.BottomNavBar
+import android.os.Build
+import androidx.annotation.RequiresApi
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CartScreen(
     navController: NavHostController,
@@ -29,9 +32,17 @@ fun CartScreen(
             Text("Tu carrito", style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.height(12.dp))
 
-            // Carrito vacío
-            Text("No hay vehículos en el carrito.", style = MaterialTheme.typography.bodyLarge)
-            Spacer(Modifier.height(16.dp))
+            // Carrito vacío o con items
+            if (cartViewModel.cartItems.isEmpty()) {
+                Text("No hay vehículos en el carrito.", style = MaterialTheme.typography.bodyLarge)
+            } else {
+                cartViewModel.cartItems.forEach { vehicle ->
+                    Column(modifier = Modifier.padding(8.dp)) {
+                        Text("${vehicle.manufacturer} ${vehicle.model}", style = MaterialTheme.typography.titleMedium)
+                        Text("Precio: $${vehicle.price}")
+                    }
+                }
+            }
 
             // Método de pago
             Text("Método de pago:", style = MaterialTheme.typography.titleMedium)
@@ -49,9 +60,21 @@ fun CartScreen(
             }
             Spacer(Modifier.height(16.dp))
 
-            // Botón de pagar
+            var direccion by remember { mutableStateOf("") }
+
+            TextField(
+                value = direccion,
+                onValueChange = { direccion = it },
+                label = { Text("Dirección de envío") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
             Button(
-                onClick = { /* acción de pago vacía */ },
+                onClick = {
+                    if (direccion.isNotBlank()) {
+                        cartViewModel.checkout(userId, direccion)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Pagar")
@@ -59,7 +82,6 @@ fun CartScreen(
 
             Spacer(Modifier.height(8.dp))
 
-            // Mensaje de éxito (simulado)
             if (cartViewModel.compraExitosa) {
                 Text(
                     "¡Compra exitosa!",

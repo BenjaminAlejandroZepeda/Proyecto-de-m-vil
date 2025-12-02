@@ -7,7 +7,10 @@ import com.example.motorsportapp.data.remote.dto.RegisterResponse
 import com.example.motorsportapp.domain.model.Vehicle
 import com.example.motorsportapp.data.remote.dto.OrderDto
 import com.example.motorsportapp.data.remote.dto.ReviewDto
+import com.example.motorsportapp.data.remote.dto.GarageDto
+import com.example.motorsportapp.data.remote.dto.GarageRequest
 import com.example.motorsportapp.domain.model.Review
+import com.example.motorsportapp.data.remote.dto.ReviewRequest
 import retrofit2.http.Path
 import retrofit2.Response
 import retrofit2.http.Body
@@ -46,7 +49,17 @@ interface ApiService {
     @GET("/api/reviews/vehiculo/{vehicleId}")
     suspend fun getReviewsByVehicle(@Path("vehicleId") vehicleId: String): List<ReviewDto>
 
+    // Garaje
+    @GET("api/garage")
+    suspend fun getGarageForCurrentUser(): Response<List<GarageDto>>
 
+    @POST("api/garage/add")
+    suspend fun addToGarage(@Body request: GarageRequest): Response<GarageDto>
+
+    // reviews
+
+    @POST("api/reviews")
+    suspend fun createReview(@Body review: ReviewRequest): Response<ReviewDto>
 
 
 

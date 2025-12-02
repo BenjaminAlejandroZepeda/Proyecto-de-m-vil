@@ -3,6 +3,7 @@ package com.example.motorsportapp.data.local
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -15,10 +16,10 @@ class PrefDataStore(private val context: Context) {
         val TOKEN = stringPreferencesKey("token")
         val USERNAME = stringPreferencesKey("username")
         val EMAIL = stringPreferencesKey("email")
-        val USER_ID = stringPreferencesKey("user_id")
+        val USER_ID = longPreferencesKey("user_id")
     }
 
-    suspend fun saveUserData(token: String?, username: String?, email: String?, userId: String?) {
+    suspend fun saveUserData(token: String?, username: String?, email: String?, userId: Long?) {
         context.dataStore.edit { prefs ->
             if (token != null) prefs[TOKEN] = token
             if (username != null) prefs[USERNAME] = username
@@ -40,7 +41,7 @@ class PrefDataStore(private val context: Context) {
         prefs[EMAIL]
     }
 
-    val getUserId: Flow<String?> = context.dataStore.data.map { prefs ->
+    val getUserId: Flow<Long?> = context.dataStore.data.map { prefs ->
         prefs[USER_ID]
     }
 
