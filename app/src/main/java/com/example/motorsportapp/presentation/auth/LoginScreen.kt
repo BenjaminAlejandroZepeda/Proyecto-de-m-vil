@@ -102,7 +102,13 @@ fun LoginScreen(
                     Spacer(Modifier.height(24.dp))
 
                     Button(
-                        onClick = { authVm.login(email, password) },
+                        onClick = {
+                            when {
+                                email.isBlank() -> authVm.showErrorLogin("El correo electrónico no puede estar vacío")
+                                password.isBlank() -> authVm.showErrorLogin("La contraseña no puede estar vacía")
+                                else -> authVm.login(email, password)
+                            }
+                        },
                         enabled = !loading,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -122,6 +128,7 @@ fun LoginScreen(
                             Text("Ingresar", fontSize = 16.sp, color = TextPrimary)
                         }
                     }
+
 
                     Spacer(Modifier.height(16.dp))
 

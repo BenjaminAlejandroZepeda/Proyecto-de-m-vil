@@ -84,4 +84,16 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("io.coil-kt:coil-compose:2.6.0")
 
+// Coroutines
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+// JUnit
+    testImplementation("junit:junit:4.13.2")
+// Mockito + Kotlin extensions
+    testImplementation("org.mockito:mockito-core:5.5.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+// Kotlin test assertions
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.0")
+// Optional: Turbine para StateFlow testing
+    testImplementation("app.cash.turbine:turbine:0.13.0")
 }

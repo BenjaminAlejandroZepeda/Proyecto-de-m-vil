@@ -19,7 +19,6 @@ class UserRepository(private val context: Context) {
             if (resp.isSuccessful && resp.body() != null) {
                 val body = resp.body()!!
 
-
                 prefs.saveUserData(
                     token = body.token,
                     username = body.user.username ?: "",
