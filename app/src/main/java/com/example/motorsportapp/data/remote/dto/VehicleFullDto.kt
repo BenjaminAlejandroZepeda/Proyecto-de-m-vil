@@ -27,4 +27,3 @@ data class VehicleImagesDto(
     val frontQuarter: String?,
     val rearQuarter: String?
 )
-

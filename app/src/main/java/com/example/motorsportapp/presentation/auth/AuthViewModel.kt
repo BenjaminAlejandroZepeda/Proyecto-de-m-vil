@@ -46,8 +46,6 @@ class AuthViewModel(private val repo: UserRepository) : ViewModel() {
             _registerState.value = AuthUiState.Loading
             val result = repo.register(username.trim(), email.trim(), password)
             if (result.isSuccess) {
-                val response = result.getOrNull()
-                _currentUserId.value = response?.user?.id
                 _registerState.value = AuthUiState.Success("Registro exitoso")
             } else {
                 _registerState.value = AuthUiState.Error(

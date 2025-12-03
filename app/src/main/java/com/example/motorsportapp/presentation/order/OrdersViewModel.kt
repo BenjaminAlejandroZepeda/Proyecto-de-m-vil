@@ -1,4 +1,4 @@
-package com.example.motorsportapp.presentation.auth
+package com.example.motorsportapp.presentation.order
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

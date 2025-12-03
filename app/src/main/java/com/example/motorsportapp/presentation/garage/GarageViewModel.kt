@@ -1,4 +1,4 @@
-package com.example.motorsportapp.presentation.auth
+package com.example.motorsportapp.presentation.garage
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.motorsportapp.data.remote.ApiService
 import com.example.motorsportapp.data.remote.dto.GarageDto
 import com.example.motorsportapp.data.remote.dto.VehicleDto2
-import com.example.motorsportapp.domain.model.Vehicle
 import com.example.motorsportapp.domain.model.TopSpeed
+import com.example.motorsportapp.domain.model.Vehicle
 import com.example.motorsportapp.domain.model.VehicleImages
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -29,26 +29,42 @@ class UserRepository(private val context: Context) {
 
                 Result.success(body)
             } else {
-                Result.failure(Exception(resp.errorBody()?.string() ?: "Error en login"))
+
+                val code = resp.code()
+                val errorMsg = when (code) {
+                    401 -> "Credenciales incorrectas"
+                    403 -> "Acceso denegado"
+                    400 -> "Datos inválidos"
+                    else -> "Error $code: ${resp.message()}"
+                }
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.failure(Exception("Error de conexión: ${e.localizedMessage}"))
         }
     }
 
-    // REGISTER
+
     suspend fun register(username: String, email: String, password: String): Result<RegisterResponse> {
         return try {
             val resp: Response<RegisterResponse> =
-                api.register(RegisterRequest(username, email, password))
+                api.register(RegisterRequest(username, email, password, "user"))
 
             if (resp.isSuccessful && resp.body() != null) {
                 Result.success(resp.body()!!)
             } else {
-                Result.failure(Exception(resp.errorBody()?.string() ?: "Error en register"))
+
+                val code = resp.code()
+                val errorMsg = when (code) {
+                    401 -> "No autorizado"
+                    403 -> "Usuario ya registrado"
+                    400 -> "Datos inválidos"
+                    else -> "Error $code: ${resp.message()}"
+                }
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.failure(Exception("Error de conexión: ${e.localizedMessage}"))
         }
     }
 
@@ -57,7 +73,7 @@ class UserRepository(private val context: Context) {
         prefs.clear()
     }
 
-    // Flows opcionales
+
     val savedToken = prefs.getToken
     val savedUsername = prefs.getUsername
     val savedEmail = prefs.getEmail
