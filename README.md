@@ -66,4 +66,4 @@ Ejecuta el proyecto con Run > Run 'app'.
 
 Ejecutar pruebas unitarias
 
-Captura del APK firmado y .jks
+## Captura del APK firmado y .jks
