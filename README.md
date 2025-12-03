@@ -67,3 +67,17 @@ Ejecuta el proyecto con Run > Run 'app'.
 Ejecutar pruebas unitarias
 
 ## Captura del APK firmado y .jks
+
+Firma:     
+<img width="1103" height="202" alt="image" src="https://github.com/user-attachments/assets/7e124a92-f307-4ddd-84e2-8f59a7d1df71" />
+
+JKS:  
+https://drive.google.com/file/d/1aclyUCHWF-_GSf6B3tYKlyghOg4JtCRw/view?usp=sharing
+
+APK:  
+https://drive.google.com/file/d/1scnQItTin0CoYhuZCW4G5ojHqaAhxmko/view?usp=sharing
+
+Backend:  
+https://github.com/BenjaminAlejandroZepeda/LegendaryMotorSport_backend
+
+
