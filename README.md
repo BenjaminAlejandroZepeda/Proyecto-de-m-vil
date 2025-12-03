@@ -19,6 +19,15 @@ La aplicación permite a los usuarios:
 - **Búsqueda y filtros:** Buscar vehículos por marca o modelo.
 - **Interfaz moderna:** Implementada con Jetpack Compose para una experiencia fluida en móviles.
 
+
+Tecnologías utilizadas
+
+- Kotlin
+- Jetpack Compose
+- MVVM
+- Retrofit
+- Coroutines
+  
 ## 4. Endpoints utilizados
 
 ### Microservicio propio
@@ -57,10 +66,4 @@ Ejecuta el proyecto con Run > Run 'app'.
 
 Ejecutar pruebas unitarias
 
-Tecnologías utilizadas
-
-- Kotlin
-- Jetpack Compose
-- MVVM
-- Retrofit
-- Coroutines
+Captura del APK firmado y .jks
