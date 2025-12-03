@@ -92,7 +92,6 @@ fun HomeScreen(
                     items(vehicles) { vehicle ->
                         VehicleCard(
                             vehicle = vehicle,
-                            favoritesViewModel = favoritesViewModel,
                             navController = navController,
                             modifier = Modifier
                                 .fillMaxWidth()

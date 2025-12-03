@@ -28,7 +28,7 @@ class PrefDataStore(private val context: Context) {
         }
     }
 
-    // --- LEER DATOS (FLOWS) ---
+
     val getToken: Flow<String?> = context.dataStore.data.map { prefs ->
         prefs[TOKEN]
     }

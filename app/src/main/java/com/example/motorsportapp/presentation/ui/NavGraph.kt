@@ -170,9 +170,6 @@ fun NavGraph(context: Context, startDestination: String = "login") {
         }
 
 
-
-
-
         // Calificar
         composable("review/{vehicleId}") { backStackEntry ->
             val vehicleId = backStackEntry.arguments?.getString("vehicleId") ?: ""
@@ -191,10 +188,8 @@ fun NavGraph(context: Context, startDestination: String = "login") {
             )
         }
 
-
-
-
         composable("vehicleDetail/{vehicleId}") { backStackEntry ->
+
             val vehicleId = backStackEntry.arguments?.getString("vehicleId") ?: ""
 
             val context = LocalContext.current
@@ -206,7 +201,6 @@ fun NavGraph(context: Context, startDestination: String = "login") {
                 factory = FavoritesViewModelFactory(api)
             )
 
-
             val vehicleRepository = remember { VehicleRepository(api) }
             val vehicleViewModel: VehicleViewModel = viewModel(
                 factory = VehicleViewModel.Factory(vehicleRepository)
@@ -214,7 +208,6 @@ fun NavGraph(context: Context, startDestination: String = "login") {
 
             val reviewViewModel = remember { ReviewViewModel(api) }
 
-            val cartViewModel = remember { CartViewModel(api) }
 
             LaunchedEffect(vehicleId) {
                 reviewViewModel.loadReviews(vehicleId)
@@ -227,10 +220,16 @@ fun NavGraph(context: Context, startDestination: String = "login") {
                 vehicleViewModel = vehicleViewModel,
                 favoritesViewModel = favoritesViewModel,
                 reviewViewModel = reviewViewModel,
+
+
                 cartViewModel = cartViewModel,
+
                 onClose = { navController.popBackStack() }
             )
         }
 
+
+
     }
 }
+

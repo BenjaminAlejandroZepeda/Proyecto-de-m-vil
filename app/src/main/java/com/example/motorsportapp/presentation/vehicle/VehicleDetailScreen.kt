@@ -159,20 +159,27 @@ fun VehicleDetailScreen(
 
 
 
-
             var justAdded by remember { mutableStateOf(false) }
-            val isFav = favoriteIds.any { it.vehicle.id == v.id }
+            val favoriteList by favoritesViewModel.favorites.collectAsState()
+            val isFav = favoriteList.any { it.vehicle.id == v.id }
+
             val scale by animateFloatAsState(
                 targetValue = if (justAdded) 1.4f else 1f,
                 animationSpec = tween(durationMillis = 300),
                 finishedListener = { justAdded = false }
             )
 
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text("${v.manufacturer} ${v.model}", style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
                 IconButton(onClick = {
                     if (!isFav) justAdded = true
+
                     favoritesViewModel.toggleFavorite(v.id)
+
+                    favoritesViewModel.getMyFavorites(force = true)
                 }) {
                     Icon(
                         imageVector = if (isFav) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
@@ -182,7 +189,6 @@ fun VehicleDetailScreen(
                     )
                 }
             }
-
 
 
 
