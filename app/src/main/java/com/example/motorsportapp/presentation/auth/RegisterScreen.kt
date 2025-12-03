@@ -119,7 +119,14 @@ fun RegisterScreen(
                     Spacer(Modifier.height(24.dp))
 
                     Button(
-                        onClick = { authVm.register(username, email, password) },
+                        onClick = {
+                            when {
+                                username.isBlank() -> authVm.showError("El nombre de usuario no puede estar vacío")
+                                email.isBlank() -> authVm.showError("El correo electrónico no puede estar vacío")
+                                password.isBlank() -> authVm.showError("La contraseña no puede estar vacía")
+                                else -> authVm.register(username, email, password)
+                            }
+                        },
                         enabled = !loading,
                         colors = ButtonDefaults.buttonColors(containerColor = PrimaryColor),
                         modifier = Modifier
@@ -139,6 +146,7 @@ fun RegisterScreen(
                             Text("Registrarse", fontSize = 16.sp, color = TextPrimary)
                         }
                     }
+
 
                     Spacer(Modifier.height(16.dp))
 

@@ -54,4 +54,13 @@ class AuthViewModel(private val repo: UserRepository) : ViewModel() {
             }
         }
     }
+
+    fun showError(message: String) {
+        _registerState.value = AuthUiState.Error(message)
+    }
+
+    fun showErrorLogin(message: String) {
+        _loginState.value = AuthUiState.Error(message)
+    }
+
 }
