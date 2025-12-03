@@ -36,7 +36,7 @@ La aplicación permite a los usuarios:
 ## 5. Pasos para ejecutar
 1. **Clonar el repositorio**
 bash
-git clone https://github.com/tu_usuario/MotorSportApp.git
+git clone [https://github.com/tu_usuario/MotorSportApp.git](https://github.com/BenjaminAlejandroZepeda/Proyecto-de-m-vil.git)
 cd MotorSportApp 
 Abrir en Android Studio
 
